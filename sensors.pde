@@ -6,15 +6,20 @@ OneWire ds(2);  // on pin 10
 
 void setup(void) {
 	// initialize inputs/outputs
+	pinMode(6, OUTPUT);
 	pinMode(9, OUTPUT);
 	// start serial port
 	Serial.begin(9600);
 }
 
+#define READ_TEMP_EVERY 1000 // ms
 void loop(void) {
+	unsigned long lastRun = millis(); 
+	while(lastRun + READ_TEMP_EVERY > millis())
+	{
+		readSerial();
+	}	
 	readTemp();
-	readSerial();
-	delay(1000);
 }
 
 void readSerial()
@@ -35,8 +40,10 @@ void readSerial()
 			digitalWrite(9, LOW);
 			break;
 		case 'w':
+			delay(1); // delay so data have time to arrive
 			inByte = Serial.read(); // Get fade level for LED
-			analogWrite(6, inByte);
+			if (inByte != -1) // only change if data arrived
+				analogWrite(6, inByte);
 			break;	
 	}
 }
