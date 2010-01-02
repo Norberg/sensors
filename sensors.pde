@@ -2,16 +2,43 @@
 
 // DS18S20 Temperature chip i/o
 
-OneWire ds(10);  // on pin 10
+OneWire ds(2);  // on pin 10
 
 void setup(void) {
 	// initialize inputs/outputs
+	pinMode(9, OUTPUT);
 	// start serial port
 	Serial.begin(9600);
 }
 
 void loop(void) {
 	readTemp();
+	readSerial();
+	delay(1000);
+}
+
+void readSerial()
+{
+	int inByte = Serial.read();
+	switch (inByte)
+	{
+		case 'B':
+			digitalWrite(13, HIGH);
+			break;
+		case 'b':
+			digitalWrite(13, LOW);
+			break;
+		case 'G':
+			digitalWrite(9, HIGH);
+			break;
+		case 'g':
+			digitalWrite(9, LOW);
+			break;
+		case 'w':
+			inByte = Serial.read(); // Get fade level for LED
+			analogWrite(6, inByte);
+			break;	
+	}
 }
 
 void readTemp(){
@@ -19,7 +46,6 @@ void readTemp(){
 	byte present = 0;
 	byte data[12];
 	byte addr[8];
-	delay(1000);
 	if ( !ds.search(addr)) {
 		ds.reset_search();
 		return;
@@ -61,7 +87,7 @@ void printTemp(byte low, byte high, byte count_remain)
 	if (high == 0xFF)
 	{
 		Serial.print("Temp: -");
-		Serial.print(low ^ 0xFF);
+		low = low ^ 0xFF;
 	}
 	else
 	{
