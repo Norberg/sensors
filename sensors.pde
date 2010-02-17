@@ -4,12 +4,17 @@
 
 OneWire ds(2);  // on pin 10
 
+//On what pins respective color is found on, pins needs to support PWM
+#define RED 11
+#define GREEN 10
+#define BLUE 9 
+
 void setup(void) {
 	// initialize inputs/outputs
 	pinMode(6, OUTPUT);
 	pinMode(9, OUTPUT);
 	// start serial port
-	Serial.begin(9600);
+	Serial.begin(115200);
 }
 
 #define READ_TEMP_EVERY 1000 // ms
@@ -27,25 +32,24 @@ void readSerial()
 	int inByte = Serial.read();
 	switch (inByte)
 	{
-		case 'B':
-			digitalWrite(13, HIGH);
-			break;
-		case 'b':
-			digitalWrite(13, LOW);
-			break;
-		case 'G':
-			digitalWrite(9, HIGH);
+		case 'r':
+			fade(RED);
 			break;
 		case 'g':
-			digitalWrite(9, LOW);
+			fade(GREEN);
 			break;
-		case 'w':
-			delay(1); // delay so data have time to arrive
-			inByte = Serial.read(); // Get fade level for LED
-			if (inByte != -1) // only change if data arrived
-				analogWrite(6, inByte);
-			break;	
+		case 'b':
+			fade(BLUE);
+			break;
 	}
+}
+
+void fade(int PORT)
+{
+	delayMicroseconds(50); // delay so data have time to arrive
+	int inByte = Serial.read(); // Get fade level for LED
+	if (inByte != -1) // only change if data arrived
+		analogWrite(PORT, inByte);
 }
 
 void readTemp(){
