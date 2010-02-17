@@ -46,7 +46,7 @@ void readSerial()
 
 void fade(int PORT)
 {
-	delayMicroseconds(50); // delay so data have time to arrive
+	delayMicroseconds(100); // delay so data have time to arrive
 	int inByte = Serial.read(); // Get fade level for LED
 	if (inByte != -1) // only change if data arrived
 		analogWrite(PORT, inByte);
