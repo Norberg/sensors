@@ -8,6 +8,7 @@ OneWire ds(2);  // on pin 10
 #define RED 11
 #define GREEN 10
 #define BLUE 9 
+#define humidity1 0 
 
 void setup(void) {
 	// initialize inputs/outputs
@@ -25,6 +26,7 @@ void loop(void) {
 		readSerial();
 	}	
 	readTemp();
+	readHumidity(humidity1);
 }
 
 void readSerial()
@@ -109,4 +111,14 @@ void printTemp(byte low, byte high, byte count_remain)
 	Serial.print(".");
 	Serial.print(int(temp*10) % 10);
 	Serial.println("C");
+}
+
+void readHumidity(int port)
+{
+	int value;
+	value = analogRead(port);
+	Serial.print("Sensor: Humidity ID: PIN");
+	Serial.print(port);
+	Serial.print(" Value: ");
+	Serial.println(value);
 }
