@@ -10,10 +10,18 @@ OneWire ds(2);  // on pin 10
 #define BLUE 9 
 #define humidity1 0 
 
+//On what pins respective stepper colour is found
+#define STEP_BLUE 4
+#define STEP_BLACK 5
+#define STEP_RED 6
+#define STEP_YELLOW 7
+
 void setup(void) {
 	// initialize inputs/outputs
-	pinMode(6, OUTPUT);
-	pinMode(9, OUTPUT);
+	pinMode(STEP_BLUE, OUTPUT);
+	pinMode(STEP_BLACK, OUTPUT);
+	pinMode(STEP_RED, OUTPUT);
+	pinMode(STEP_YELLOW, OUTPUT);
 	// start serial port
 	Serial.begin(115200);
 }
@@ -24,9 +32,43 @@ void loop(void) {
 	while(lastRun + READ_TEMP_EVERY > millis())
 	{
 		readSerial();
+		//turnStepper();
 	}	
 	readTemp();
 	readHumidity(humidity1);
+}
+
+#define STEP_TIME 50
+void turnStepper()
+{
+/*
+	singleStep(STEP_BLUE, STEP_BLACK);
+	singleStep(STEP_BLACK);
+	singleStep(STEP_BLACK, STEP_RED);
+	singleStep(STEP_RED);
+	singleStep(STEP_RED, STEP_YELLOW);
+	singleStep(STEP_YELLOW);
+	singleStep(STEP_YELLOW, STEP_BLUE);
+*/
+	singleStep(STEP_RED);
+	singleStep(STEP_BLUE);
+	singleStep(STEP_BLACK);
+	singleStep(STEP_YELLOW);
+}
+
+void singleStep(int pin)
+{
+	digitalWrite(pin, HIGH);	
+	delay(STEP_TIME);	
+	digitalWrite(pin, LOW);
+}
+void singleStep(int pin1, int pin2)
+{
+	digitalWrite(pin1, HIGH);	
+	digitalWrite(pin2, HIGH);	
+	delay(STEP_TIME);	
+	digitalWrite(pin1, LOW);
+	digitalWrite(pin2, LOW);
 }
 
 void readSerial()
